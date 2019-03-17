@@ -4,16 +4,14 @@ mat_file_path = 'knees.mat';
 result_save_dir = './results';
 
 % convert ismrmrd to mat format
-% convert_ISMRMRD_to_mat(ismrmrd_file_path, mat_file_path)
+if ~exist(mat_file_path, 'file')
+    convert_ISMRMRD_to_mat(ismrmrd_file_path, mat_file_path)   
+end
 
 % read mat file
-if exist(mat_file_path, 'file')
-    fprintf('loading mat file...')
-    load(mat_file_path)
-    fprintf('done.')
-else
-    error(['File ' mat_file_path ' does not exist.  Please generate it.'])
-end
+fprintf('loading mat file...')
+load(mat_file_path)
+fprintf('done.')
 
 % get encoding parameter from data_header
 enc_Nx = data_header.encoding.encodedSpace.matrixSize.x;

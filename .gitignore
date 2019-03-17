@@ -2,4 +2,4 @@ results/
 *.h5
 *.mat
 *.asv
-data/
+old_mridata/
