@@ -1,4 +1,4 @@
-results/
+*_results/
 *.h5
 *.mat
 *.asv

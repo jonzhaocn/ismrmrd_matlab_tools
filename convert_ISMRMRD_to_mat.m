@@ -1,4 +1,4 @@
-function convert_ISMRMRD_to_mat(file_path, save_file_path)
+function [mri_data, data_header] = convert_ISMRMRD_to_mat(file_path, save_file_path)
     if exist(file_path, 'file')
         dset = ismrmrd.Dataset(file_path, 'dataset');
     else
@@ -53,7 +53,7 @@ function convert_ISMRMRD_to_mat(file_path, save_file_path)
     
     fprintf('read acquisition ... \n')
     D = dset.readAcquisition();
-    fprintf('done.')
+    fprintf('done.\n')
     
     % Note: can select a single acquisition or header from the block, e.g.
     % acq = D.select(5);
@@ -78,7 +78,8 @@ function convert_ISMRMRD_to_mat(file_path, save_file_path)
     % Since the entire file is in memory we can use random access
     % Loop over repetitions, contrasts, slices
     fprintf("saving ...\n")
-    mri_data = zeros(enc_Nx, enc_Ny, enc_Nz * nReps * nContrasts * nSlices, nCoils, 'like', meas.data{1});
+    mri_data = cell(nReps * nContrasts * nSlices);
+    
     nimages = 1;
     for rep = 1:nReps
         for contrast = 1:nContrasts
@@ -89,18 +90,20 @@ function convert_ISMRMRD_to_mat(file_path, save_file_path)
                 acqs = find(  (meas.head.idx.contrast==(contrast-1)) ...
                             & (meas.head.idx.repetition==(rep-1)) ...
                             & (meas.head.idx.slice==(slice-1)));
+                        
                 for p = 1:length(acqs)
                     ky = meas.head.idx.kspace_encode_step_1(acqs(p)) + 1;
                     kz = meas.head.idx.kspace_encode_step_2(acqs(p)) + 1;
+                                        
                     K(:,ky,kz,:) = meas.data{acqs(p)};
                 end
-                mri_data(:, :, nimages * (1:enc_Nz), :) = K;
+                mri_data{nimages} = K;
                 nimages = nimages + 1;
             end
         end
     end
     
     data_header = hdr;
-    save(save_file_path, 'mri_data', 'data_header')
+    save(save_file_path, 'mri_data', 'data_header', '-v7.3')
     fprintf('done.\n')
 end
