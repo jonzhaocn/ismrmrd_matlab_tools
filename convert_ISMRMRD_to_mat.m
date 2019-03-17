@@ -78,7 +78,7 @@ function [mri_data, data_header] = convert_ISMRMRD_to_mat(file_path, save_file_p
     % Since the entire file is in memory we can use random access
     % Loop over repetitions, contrasts, slices
     fprintf("saving ...\n")
-    mri_data = cell(nReps * nContrasts * nSlices);
+    mri_data = cell(nReps * nContrasts * nSlices, 1);
     
     nimages = 1;
     for rep = 1:nReps
