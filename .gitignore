@@ -1,0 +1,5 @@
+results/
+*.h5
+*.mat
+*.asv
+data/
