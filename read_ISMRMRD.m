@@ -1,4 +1,4 @@
-function [mri_data, data_header] = convert_ISMRMRD_to_mat(file_path, save_file_path)
+function [mri_data, data_header] = read_ISMRMRD(file_path)
     if exist(file_path, 'file')
         dset = ismrmrd.Dataset(file_path, 'dataset');
     else
@@ -77,7 +77,6 @@ function [mri_data, data_header] = convert_ISMRMRD_to_mat(file_path, save_file_p
     %% Reconstruct images
     % Since the entire file is in memory we can use random access
     % Loop over repetitions, contrasts, slices
-    fprintf("saving ...\n")
     mri_data = cell(nReps * nContrasts * nSlices, 1);
     
     nimages = 1;
@@ -85,7 +84,7 @@ function [mri_data, data_header] = convert_ISMRMRD_to_mat(file_path, save_file_p
         for contrast = 1:nContrasts
             for slice = 1:nSlices
                 % Initialize the K-space storage array
-                K = zeros(enc_Nx, enc_Ny, enc_Nz, nCoils, 'like', meas.data{1});
+                K = zeros(enc_Nx, enc_Ny, 1, nCoils, 'like', meas.data{1});
                 % Select the appropriate measurements from the data
                 acqs = find(  (meas.head.idx.contrast==(contrast-1)) ...
                             & (meas.head.idx.repetition==(rep-1)) ...
@@ -104,6 +103,4 @@ function [mri_data, data_header] = convert_ISMRMRD_to_mat(file_path, save_file_p
     end
     
     data_header = hdr;
-    save(save_file_path, 'mri_data', 'data_header', '-v7.3')
-    fprintf('done.\n')
 end

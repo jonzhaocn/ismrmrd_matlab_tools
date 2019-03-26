@@ -2,6 +2,8 @@
 % original images and noisy image according to k-space data
 
 % ismrmrd file download from URL http://mridata.org/list
+clc;
+clear;
 ismrmrd_file_path = 'D:\mri_data\hdf_files\stanford_fullysampled_3d_fse_knees\52c2fd53-d233-4444-8bfd-7c454240d314.h5';
 intermediate_mat_file_path = 'D:\mri_data\mat_files\52c2fd53-d233-4444-8bfd-7c454240d314.mat';
 result_mat_file_path = './train_mri_data.mat';
@@ -12,7 +14,9 @@ contrast_rate = 0.65;
 % convert ismrmrd to mat format
 if ~exist(intermediate_mat_file_path, 'file')
     fprintf('converting ismrmrd to mat format: %s \n', ismrmrd_file_path)
-    [mri_data, data_header] = convert_ISMRMRD_to_mat(ismrmrd_file_path, intermediate_mat_file_path);
+    [mri_data, data_header] = read_ISMRMRD(ismrmrd_file_path);
+    fprintf('save intermediate mat: %s \n', intermediate_mat_file_path)
+    save(intermediate_mat_file_path, 'mri_data', 'data_header', '-v7.3')
     fprintf('done.\n')
 else
     % read mat file
