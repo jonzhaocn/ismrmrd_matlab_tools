@@ -36,7 +36,7 @@ end
 
 mask_step = 3;
 num_acs_line = 48;
-mask = create_mask([rec_Nx, rec_Ny, nCoils], mask_step, num_acs_line);
+mask = create_uniform_mask([rec_Nx, rec_Ny, nCoils], mask_step, num_acs_line);
 mask = reshape(mask, rec_Nx, rec_Ny, 1, nCoils);
 
 original_images = get_images_from_kspace_data(mri_data, data_header, pixel_value_range, contrast_rate);

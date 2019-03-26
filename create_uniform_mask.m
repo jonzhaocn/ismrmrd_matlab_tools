@@ -1,4 +1,4 @@
-function [mask, sampling_rate] = create_mask(size, step, num_acs_line)
+function [mask, sampling_rate] = create_uniform_mask(size, step, num_acs_line)
     mask = zeros(size);
     
     if numel(num_acs_line) == 1
@@ -25,7 +25,7 @@ function [mask, sampling_rate] = create_mask(size, step, num_acs_line)
         error('illegal step');
     end
     
-    sampling_rate = prod(size)/sum(mask(:));
+    sampling_rate = sum(mask(:))/prod(size);
     mask = logical(mask);
 end
 
