@@ -1,9 +1,12 @@
-function images = get_images_from_kspace_data(kspace_data, data_header, pixel_value_range, contrast_rate, mask)
+function images = get_images_from_kspace_data(kspace_data, data_header, pixel_value_range, contrast_rate, mask, config)
     if nargin < 2
         error('need to input parameters: kspace_data and data_header')
     end
-    if nargin > 5
+    if nargin > 6
         error('too much parameters')
+    end
+    if nargin < 6
+        config = struct();
     end
     if nargin < 5
         mask = 1;
@@ -26,9 +29,21 @@ function images = get_images_from_kspace_data(kspace_data, data_header, pixel_va
     enc_Ny = data_header.encoding.encodedSpace.matrixSize.y;
     enc_Nz = data_header.encoding.encodedSpace.matrixSize.z;
     
-    rec_Nx = data_header.encoding.reconSpace.matrixSize.x;
-    rec_Ny = data_header.encoding.reconSpace.matrixSize.y;
-    rec_Nz = data_header.encoding.reconSpace.matrixSize.z;
+    if isfield(config, 'rec_Nx')
+       rec_Nx = config.rec_Nx;
+    else
+       rec_Nx = data_header.encoding.reconSpace.matrixSize.x; 
+    end
+    if isfield(config, 'rec_Ny')
+       rec_Ny = config.rec_Ny;
+    else
+       rec_Ny = data_header.encoding.reconSpace.matrixSize.y; 
+    end
+    if isfield(config, 'rec_Nz')
+       rec_Nz = config.rec_Nz;
+    else
+       rec_Nz = data_header.encoding.reconSpace.matrixSize.z;
+    end
 
     try
         nCoils = data_header.acquisitionSystemInformation.receiverChannels;
@@ -40,7 +55,7 @@ function images = get_images_from_kspace_data(kspace_data, data_header, pixel_va
         K = kspace_data{i};
         
         % for reconstrution size larger than encoding size
-        if rec_Nx > enc_Nx && rec_Ny > enc_Ny
+        if rec_Nx > enc_Nx || rec_Ny > enc_Ny
             temp = zeros(rec_Nx, rec_Ny, size(K,3), nCoils, 'like', K);
             indx_1 = floor((rec_Nx - enc_Nx)/2)+1;
             indx_2 = floor((rec_Nx - enc_Nx)/2)+ enc_Nx;

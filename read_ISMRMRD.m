@@ -23,7 +23,7 @@ function [mri_data, data_header] = read_ISMRMRD(file_path)
     % not have an entry for some of the parameters
 
     try
-      nSlices = hdr.encoding.encodingLimits.slice.maximum + 1;
+        nSlices = hdr.encoding.encodingLimits.slice.maximum + 1;
     catch
         nSlices = 1;
     end

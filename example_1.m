@@ -7,10 +7,15 @@ clear;
 % ismrmrd_file_path = 'D:\mri_data\hdf_files\stanford_fullysampled_3d_fse_knees\52c2fd53-d233-4444-8bfd-7c454240d314.h5';
 % mat_file_path = 'D:\mri_data\mat_files\52c2fd53-d233-4444-8bfd-7c454240d314.mat';
 % result_save_dir = './stanford_fullysampled_3d_fse_knees_results';
+
 ismrmrd_file_path = 'D:\mri_data\hdf_files\stanford_2d_fse\7b2c6a8a-0cff-4eb1-84ed-7dd490563181.h5';
 intermediate_mat_file_path = './7b2c6a8a-0cff-4eb1-84ed-7dd490563181.mat';
 result_save_dir = './stanford_2d_fse';
+
 contrast_rate = 0.65;
+pixel_value_range = [0, 1];
+mask = 1; 
+config = struct('rec_Nx', 512, 'rec_Ny', 512);
 
 % convert ismrmrd to mat format
 if ~exist(intermediate_mat_file_path, 'file')
@@ -25,7 +30,9 @@ else
     load(intermediate_mat_file_path)
     fprintf('done.\n')
 end
-images = get_images_from_kspace_data(mri_data, data_header);
+
+% images = get_images_from_kspace_data(mri_data, data_header);
+images = get_images_from_kspace_data(mri_data, data_header, pixel_value_range, contrast_rate, mask, config);
 
 if ~exist(result_save_dir, 'dir')
     mkdir(result_save_dir);
@@ -36,10 +43,8 @@ for i = 1:size(images, 4)
     img = images(:, :, :, i);
     img_name = fullfile(result_save_dir, sprintf('recon_image_%d.png', i));
     
-    img = (img - min(img(:)));
-    max_val = max(img(:));
-    img(img > contrast_rate * max_val) = contrast_rate * max_val;
-    img = img / (contrast_rate * max_val);
+    img = img - min(img(:));
+    img = img / max(img(:));
     
     imwrite(img, img_name);
     fprintf('save image: %s\n', img_name);
