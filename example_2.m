@@ -39,5 +39,5 @@ original_images = get_images_from_kspace_data(mri_data, data_header, pixel_value
 noisy_images = get_images_from_kspace_data(mri_data, data_header, pixel_value_range, contrast_rate, mask);
 
 save(result_mat_file_path, 'original_images', 'noisy_images');
-fprintf('save mri_data: %s\n', result_file_path)
+fprintf('save mri_data: %s\n', result_mat_file_path)
 
