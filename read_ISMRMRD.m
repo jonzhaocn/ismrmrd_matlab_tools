@@ -101,6 +101,7 @@ function [mri_data, data_header] = read_ISMRMRD(file_path)
             end
         end
     end
-    
+    mri_data = cat(3, mri_data{:});
+    mri_data = permute(mri_data, [1,2,4,3]);
     data_header = hdr;
 end

@@ -51,18 +51,18 @@ function images = get_images_from_kspace_data(kspace_data, data_header, pixel_va
         nCoils = 1;
     end
     
-    for i = 1:size(kspace_data, 1)
-        K = kspace_data{i};
+    for i = 1:size(kspace_data, 4)
+        K = kspace_data(:,:,:,i);
         
         % for reconstrution size larger than encoding size
         if rec_Nx > enc_Nx || rec_Ny > enc_Ny
-            temp = zeros(rec_Nx, rec_Ny, size(K,3), nCoils, 'like', K);
+            temp = zeros(rec_Nx, rec_Ny, nCoils, 'like', K);
             indx_1 = floor((rec_Nx - enc_Nx)/2)+1;
             indx_2 = floor((rec_Nx - enc_Nx)/2)+ enc_Nx;
             
             indy_1 = floor((rec_Ny - enc_Ny)/2)+1;
             indy_2 = floor((rec_Ny - enc_Ny)/2)+ enc_Ny;
-            temp(indx_1:indx_2, indy_1:indy_2,:,:) = K;
+            temp(indx_1:indx_2, indy_1:indy_2,:) = K;
             K = temp;
         end
         % apply mask in k-space data
@@ -80,7 +80,7 @@ function images = get_images_from_kspace_data(kspace_data, data_header, pixel_va
         if size(K,3)>1
             K = fftshift(ifft(fftshift(K,3),[],3),3);
         end
-        img = sqrt(sum(abs(K).^2, 4));
+        img = sqrt(sum(abs(K).^2, 3));
         
         images{i} = img; 
     end
