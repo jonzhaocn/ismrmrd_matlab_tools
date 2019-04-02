@@ -90,6 +90,10 @@ function [mri_data, data_header] = read_ISMRMRD(file_path)
                             & (meas.head.idx.repetition==(rep-1)) ...
                             & (meas.head.idx.slice==(slice-1)));
                         
+                if isempty(acqs)
+                    continue
+                end
+                        
                 for p = 1:length(acqs)
                     ky = meas.head.idx.kspace_encode_step_1(acqs(p)) + 1;
                     kz = meas.head.idx.kspace_encode_step_2(acqs(p)) + 1;
