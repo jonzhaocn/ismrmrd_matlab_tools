@@ -22,7 +22,7 @@ function images = get_images_from_kspace_data(kspace_data, data_header, pixel_va
         error('wrong pixel value range')
     end
     
-    images = cell(size(kspace_data, 1), 1);
+    images = cell(size(kspace_data, 4), 1);
     
     % get encoding parameter from data_header
     enc_Nx = data_header.encoding.encodedSpace.matrixSize.x;
